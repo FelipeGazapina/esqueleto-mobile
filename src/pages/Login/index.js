@@ -1,20 +1,25 @@
-import React, { useState } from "react";
-import styles from "../../styles/LoginStyle";
+import React, { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import {
-  Text,
-  View,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+  ContainerLogin,
+  Logo,
+  InputForm,
+  BtnSubmitForm,
+  TxtSubmitForm,
+  LinkNewUser,
+  ImageLogo,
+  LoadingArea,
+} from "../../styles/global";
+import { ScrollView, Alert, ActivityIndicator } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
-
 const backend = {
+  name: "Tester",
+  img: "imagem",
   login: "login@gmail.com.br",
   password: "senha",
-  token: "teste token para conectar no backend",
+  token: "202106",
   erro: false,
   mensagem: "Login realizado com sucesso!",
 };
@@ -23,73 +28,99 @@ export default function Login() {
   const navigation = useNavigation(); // empilha as paginas
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [v, setV] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const verifyToken = async () => {
+    setV(await AsyncStorage.getItem("@token"));
+  };
 
   const validate = () => {
     if (!email) {
       Alert.alert("", "Email can`t be empty!");
+      setLoading(false);
       return false;
     }
     if (!password) {
       Alert.alert("", "Password can`t be empty!");
+      setLoading(false);
       return false;
     }
+    return true;
   };
   const loginSubmit = () => {
+    setLoading(true);
     if (!validate()) return;
 
     if (backend.erro) Alert.alert("", backend.mensagem);
-    else Alert.alert("", backend.mensagem);
+    else {
+      setLoading(false);
+
+      AsyncStorage.setItem("@token", backend.token);
+      AsyncStorage.setItem("@name", backend.name);
+      AsyncStorage.setItem("@img", backend.img);
+      navigation.navigate("Home");
+    }
   };
 
+  useEffect(() => {
+    if (v) navigation.navigate("Home");
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.logo}>
-        <Image source={require("../../../assets/logo.png")} />
-      </View>
-      <TextInput
-        style={styles.inputForm}
-        placeholder="Email"
-        autoCorrect={false}
-        value={email}
-        keyboardType={"email-address"}
-        autoCapitalize="none"
-        onChangeText={(text) => {
-          setEmail(text);
-        }}
-      />
-      <TextInput
-        style={styles.inputForm}
-        placeholder="Senha"
-        autoCorrect={false}
-        value={password}
-        secureTextEntry={true}
-        onChangeText={(text) => {
-          setPassword(text);
-        }}
-      />
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ContainerLogin>
+        <Logo>
+          <ImageLogo source={require("../../../assets/logo.png")} />
+        </Logo>
+        <InputForm
+          placeholder="Email"
+          autoCorrect={false}
+          value={email}
+          keyboardType={"email-address"}
+          autoCapitalize="none"
+          editable={!loading}
+          onChangeText={(text) => {
+            setEmail(text);
+          }}
+        />
+        <InputForm
+          placeholder="Senha"
+          autoCorrect={false}
+          value={password}
+          secureTextEntry={true}
+          editable={!loading}
+          onChangeText={(text) => {
+            setPassword(text);
+          }}
+        />
 
-      <TouchableOpacity style={styles.btnSubmitForm} onPress={loginSubmit}>
-        <Text style={styles.txtSubmitForm}>Acessar</Text>
-      </TouchableOpacity>
+        <BtnSubmitForm disabled={loading} onPress={loginSubmit}>
+          <TxtSubmitForm>Acessar</TxtSubmitForm>
+        </BtnSubmitForm>
 
-      <Text
-        onPress={() => {
-          navigation.navigate("NewUser");
-        }}
-        style={styles.linkNewUser}
-      >
-        {" "}
-        Cadastrar{" "}
-      </Text>
-      <Text
-        onPress={() => {
-          navigation.navigate("RecoverPassword");
-        }}
-        style={styles.linkNewUser}
-      >
-        {" "}
-        Esqueci a senha{" "}
-      </Text>
-    </View>
+        <LinkNewUser
+          onPress={() => {
+            navigation.navigate("NewUser");
+          }}
+        >
+          {" "}
+          Cadastrar{" "}
+        </LinkNewUser>
+        <LinkNewUser
+          onPress={() => {
+            navigation.navigate("RecoverPassword");
+          }}
+        >
+          {" "}
+          Esqueci a senha{" "}
+        </LinkNewUser>
+        {loading && (
+          <LoadingArea>
+            <ActivityIndicator size={"large"} color="#fff" />
+          </LoadingArea>
+        )}
+      </ContainerLogin>
+    </ScrollView>
   );
 }

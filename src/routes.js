@@ -7,6 +7,7 @@ const Stack = createNativeStackNavigator();
 import Login from "./pages/Login";
 import NewUser from "./pages/NewUser";
 import RecoverPassword from "./pages/RecoverPassword";
+import Home from "./pages/Home";
 
 export default function Routes() {
   return (
@@ -20,12 +21,17 @@ export default function Routes() {
         <Stack.Screen
           name="NewUser"
           component={NewUser}
-          options={{ title: "Cadastrar" }}
+          options={{ title: "Cadastrar", headerShown: false }}
         />
         <Stack.Screen
           name="RecoverPassword"
           component={RecoverPassword}
-          options={{ title: "Recuperar a senha" }}
+          options={{ title: "Recuperar a senha", headerShown: false }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{ title: "Home", headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
