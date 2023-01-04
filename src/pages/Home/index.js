@@ -8,15 +8,6 @@ export default function Home() {
   return (
     <Container>
       <Text>Bem vindo</Text>
-      <Text
-        onPress={async () => {
-          await AsyncStorage.removeItem("@token");
-          await AsyncStorage.removeItem("@name");
-          await AsyncStorage.removeItem("@img");
-        }}
-      >
-        Quit
-      </Text>
     </Container>
   );
 }

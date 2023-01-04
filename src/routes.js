@@ -22,7 +22,7 @@ export default function Routes() {
         setValidated(valToken);
       },
     };
-  });
+  }, []);
 
   const getToken = async () => {
     try {
