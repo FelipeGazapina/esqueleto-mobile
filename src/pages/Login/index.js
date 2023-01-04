@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthContext } from "../../context/auth";
 
 import {
   ContainerLogin,
@@ -15,10 +16,6 @@ import { ScrollView, Alert, ActivityIndicator } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 const backend = {
-  name: "Tester",
-  img: "imagem",
-  login: "login@gmail.com.br",
-  password: "senha",
   token: "202106",
   erro: false,
   mensagem: "Login realizado com sucesso!",
@@ -26,14 +23,12 @@ const backend = {
 
 export default function Login() {
   const navigation = useNavigation(); // empilha as paginas
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [v, setV] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const verifyToken = async () => {
-    setV(await AsyncStorage.getItem("@token"));
-  };
+  const { signIn } = useContext(AuthContext);
 
   const validate = () => {
     if (!email) {
@@ -48,24 +43,21 @@ export default function Login() {
     }
     return true;
   };
-  const loginSubmit = () => {
+  const loginSubmit = async () => {
     setLoading(true);
     if (!validate()) return;
 
-    if (backend.erro) Alert.alert("", backend.mensagem);
-    else {
+    if (backend.erro) {
+      Alert.alert("", backend.mensagem);
+      setLoading(false);
+    } else {
       setLoading(false);
 
-      AsyncStorage.setItem("@token", backend.token);
-      AsyncStorage.setItem("@name", backend.name);
-      AsyncStorage.setItem("@img", backend.img);
-      navigation.navigate("Home");
+      // login do backend e retorno do token
+      await AsyncStorage.setItem("@token", backend.token);
+      signIn();
     }
   };
-
-  useEffect(() => {
-    if (v) navigation.navigate("Home");
-  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -107,6 +99,7 @@ export default function Login() {
           {" "}
           Cadastrar{" "}
         </LinkNewUser>
+
         <LinkNewUser
           onPress={() => {
             navigation.navigate("RecoverPassword");
