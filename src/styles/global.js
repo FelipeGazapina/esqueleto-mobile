@@ -51,6 +51,13 @@ export const Container = styled.SafeAreaView`
   background-color: #fff;
   color: #222;
 `;
+export const ContainerList = styled.SafeAreaView`
+  flex: 1;
+  padding: 15px;
+  background-color: #fff;
+  color: #222;
+`;
+
 export const LoadingArea = styled.View`
   position: absolute;
   left: 0;

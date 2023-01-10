@@ -2,15 +2,17 @@ import React, { useState, useEffect, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthContext } from "./context/auth";
-import { getValToken } from "./services/auth";
+import { AuthContext } from "../context/auth";
+import { getValToken } from "../services/auth";
+import BottomTabs from "./TabNavigator";
 
 const Stack = createNativeStackNavigator();
 
-import Login from "./pages/Login";
-import NewUser from "./pages/NewUser";
-import RecoverPassword from "./pages/RecoverPassword";
-import Home from "./pages/Home";
+import Login from "../pages/Login";
+import NewUser from "../pages/NewUser";
+import RecoverPassword from "../pages/RecoverPassword";
+import KeyVerify from "../pages/KeyVerify";
+import Home from "../pages/Home";
 
 export default function Routes() {
   const [validated, setValidated] = useState(null);
@@ -20,6 +22,7 @@ export default function Routes() {
       signIn: async () => {
         const valToken = AsyncStorage.getItem("@token");
         setValidated(valToken);
+        // setValidated(false);
       },
     };
   }, []);
@@ -47,13 +50,7 @@ export default function Routes() {
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
         {validated ? (
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{ title: "Home", headerShown: false }}
-            />
-          </Stack.Navigator>
+          <BottomTabs />
         ) : (
           <Stack.Navigator>
             <Stack.Screen
@@ -69,7 +66,18 @@ export default function Routes() {
             <Stack.Screen
               name="RecoverPassword"
               component={RecoverPassword}
-              options={{ title: "Recuperar a senha", headerShown: false }}
+              options={{
+                title: "Recuperar a senha",
+                headerTitle: "Recuperar Senha",
+              }}
+            />
+            <Stack.Screen
+              name="KeyVerify"
+              component={KeyVerify}
+              options={{
+                title: "Recuperar a senha",
+                headerTitle: "Validar chave",
+              }}
             />
           </Stack.Navigator>
         )}

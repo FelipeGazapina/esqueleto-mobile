@@ -5,12 +5,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Container } from "../../styles/global";
 
-export default function Home() {
+export default function Profile() {
   const Tab = createBottomTabNavigator();
 
   return (
     <Container>
-      <Text>Bem vindo</Text>
+      <Text>Bem vindo ao seu perfil</Text>
     </Container>
   );
 }
